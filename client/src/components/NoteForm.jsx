@@ -1,20 +1,11 @@
-import { useState } from 'react';
-
-const NoteForm = ({ createNote }) => {
-    const [newNote, setNewNote] = useState('');
-
-    const handleChange = (event) => {
-        setNewNote(event.target.value);
-    };
-
-    const addNote = (event) => {
+import { connect } from 'react-redux';
+import { createNote } from '../reducers/noteReducer';
+const NoteForm = (props) => {
+    const addNote = async (event) => {
         event.preventDefault();
-        createNote({
-            content: newNote,
-            important: false,
-        });
-
-        setNewNote('');
+        const content = event.target.note.value;
+        event.target.note.value = '';
+        props.createNote({ content, important: true });
     };
 
     return (
@@ -22,11 +13,11 @@ const NoteForm = ({ createNote }) => {
             <h2>Create a new note</h2>
 
             <form onSubmit={addNote}>
-                <input value={newNote} onChange={handleChange} />
+                <input name="note" />
                 <button type="submit">save</button>
             </form>
         </div>
     );
 };
 
-export default NoteForm;
+export default connect(null, { createNote })(NoteForm);

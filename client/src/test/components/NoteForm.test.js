@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import NoteForm from '../components/NoteForm';
+import NoteForm from '../../components/NoteForm';
 import userEvent from '@testing-library/user-event';
 
 test('<NoteForm /> update parent state and calls onSubmit', async () => {
