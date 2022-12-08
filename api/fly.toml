@@ -1,12 +1,11 @@
-# fly.toml file generated for floral-breeze-3726 on 2022-11-26T15:08:01+07:00
+# fly.toml file generated for nth-pg on 2022-12-07T22:02:28+07:00
 
-app = "floral-breeze-3726"
+app = "nth-pg"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
-  PORT = "8080"
 
 [experimental]
   allowed_public_ports = []

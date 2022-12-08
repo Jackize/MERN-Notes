@@ -1,25 +1,33 @@
-const mongoose = require('mongoose');
+const { Model, DataTypes } = require('sequelize');
 
-const noteSchema = new mongoose.Schema({
-    content: {
-        type: String,
-        required: true,
-        minlength: 5,
-    },
-    date: Date,
-    important: Boolean,
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    },
-});
+const { sequelize } = require('../util/db');
 
-noteSchema.set('toJSON', {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString();
-        delete returnedObject._id;
-        delete returnedObject.__v;
-    },
-});
+class Note extends Model {}
 
-module.exports = mongoose.model('Note', noteSchema);
+Note.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        content: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        important: {
+            type: DataTypes.BOOLEAN,
+        },
+        date: {
+            type: DataTypes.DATE,
+        },
+    },
+    {
+        sequelize,
+        underscored: true,
+        timestamps: false,
+        modelName: 'note',
+    }
+);
+
+module.exports = Note;
