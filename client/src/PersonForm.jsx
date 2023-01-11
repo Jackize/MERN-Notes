@@ -2,15 +2,24 @@ import { useMutation } from "@apollo/client";
 import React from "react";
 import { ALL_PERSONS, CREATE_PERSON } from "./queries";
 
-export default function PersonForm() {
+export default function PersonForm({ setError }) {
   const [field, setField] = React.useState({
-    name: null,
-    phone: null,
-    street: null,
-    city: null,
+    name: "",
+    phone: "",
+    street: "",
+    city: "",
   });
   const [createPerson] = useMutation(CREATE_PERSON, {
-    refetchQueries: [{ query: ALL_PERSONS }],
+    onError: (error) => {
+      setError(error.message);
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_PERSONS }, ({ allPersons }) => {
+        return {
+          allPersons: allPersons.concat(response.data.addPerson),
+        };
+      });
+    },
   });
 
   const handleChange = (e) => {
@@ -18,14 +27,21 @@ export default function PersonForm() {
   };
   const submit = (e) => {
     e.preventDefault();
-    console.log({ ...field });
-    createPerson({ variables: { ...field } });
+    const { name, phone, street, city } = field;
+    createPerson({
+      variables: {
+        name: name ? name : null,
+        phone: phone ? phone : null,
+        street: street ? street : null,
+        city: city ? city : null,
+      },
+    });
 
     setField({
-      name: null,
-      phone: null,
-      street: null,
-      city: null,
+      name: "",
+      phone: "",
+      street: "",
+      city: "",
     });
   };
   return (
@@ -34,35 +50,19 @@ export default function PersonForm() {
       <form onSubmit={submit}>
         <div>
           name
-          <input
-            name="name"
-            value={field.name ? field.name : ""}
-            onChange={handleChange}
-          />
+          <input name="name" value={field.name} onChange={handleChange} />
         </div>
         <div>
           phone
-          <input
-            name="phone"
-            value={field.phone ? field.phone : ""}
-            onChange={handleChange}
-          />
+          <input name="phone" value={field.phone} onChange={handleChange} />
         </div>
         <div>
           street
-          <input
-            name="street"
-            value={field.street ? field.street : ""}
-            onChange={handleChange}
-          />
+          <input name="street" value={field.street} onChange={handleChange} />
         </div>
         <div>
           city
-          <input
-            name="city"
-            value={field.city ? field.city : ""}
-            onChange={handleChange}
-          />
+          <input name="city" value={field.city} onChange={handleChange} />
         </div>
         <button type="submit">Add</button>
       </form>
