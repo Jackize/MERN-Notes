@@ -12,9 +12,11 @@ const resolvers = {
   Query: {
     personCount: async () => Person.collection.countDocuments(),
     allPersons: async (root, args) => {
-      if (!args.phone) return Person.find({});
+      if (!args.phone) return Person.find({}).populate("friendOf");
 
-      return Person.find({ phone: { $exists: args.phone === "YES" } });
+      return Person.find({ phone: { $exists: args.phone === "YES" } }).populate(
+        "friendOf"
+      );
     },
     findPerson: async (root, args) => Person.findOne({ name: args.name }),
     me: (root, args, context) => context.currentUser,
@@ -25,6 +27,14 @@ const resolvers = {
         street: root.street,
         city: root.city,
       };
+    },
+    friendOf: async (root) => {
+      const friends = await User.find({
+        friends: {
+          $in: [root._id],
+        },
+      });
+      return friends;
     },
   },
   Mutation: {
@@ -71,7 +81,6 @@ const resolvers = {
     },
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username });
-      console.log(user);
       if (!user || args.password !== "secret") {
         throw new UserInputError("Wrong credentials");
       }
