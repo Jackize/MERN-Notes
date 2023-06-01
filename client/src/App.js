@@ -60,7 +60,7 @@ const App = (props) => {
     return (
         <div>
             <h1>Notes</h1>
-            <Notification message={errorMessage} />
+            {errorMessage && <Notification message={errorMessage} />}
 
             {user === null ? (
                 <Togglable buttonLabel="login">
